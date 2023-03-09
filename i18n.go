@@ -11,13 +11,13 @@ type InitOptions struct {
 	Ns          []string
 	DefaultNS   string
 	Debug       bool
-	Resource    interface{}
+	Resource    any
 	Backend     Backend
 }
 
 type I18n struct{}
 
-type Trans func(key string, props interface{}) string
+type Trans func(key string, props any) string
 
 type InitCallback func(err, t Trans) string
 
