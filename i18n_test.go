@@ -1,23 +1,26 @@
 package i18next_test
 
 import (
-	"github.com/yuangwei/go-i18next"
 	"testing"
+
+	"github.com/yuangwei/go-i18next"
 )
 
-func TestTranslate(t *testing.T) {
-	i18next.Init(i18next.InitOptions{
-		DefaultNS: "en",
-		Backend: i18next.Backend{
-			LoadPath: []string{
-				"https://www.baidu.com",
+func TestTranslateBasic(t *testing.T) {
+	i18n := i18next.Init(i18next.InitOptions{
+		FallbackLng: "en",
+		DefaultNS:   "en",
+		Resources:   map[string]map[string]string{
+			"en": {
+				"index.home": "Hello world",
 			},
 		},
 	})
 
-	f := i18next.T("xxx", "1", "2")
+	_, err := i18n.T("index.home", "1", "2")
 
-	if f != "xxx" {
-		t.Fatalf(`i18n.T("xxx") = %q,`, f)
+	if err != nil {
+		t.Fatalf(`i18n.T("xxx") = %q,`, err)
 	}
+
 }

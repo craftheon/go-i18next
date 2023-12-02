@@ -1,2 +1,4 @@
-# go-i18next
-i18next go support
+go-i18next
+---
+i18next go support.
+
