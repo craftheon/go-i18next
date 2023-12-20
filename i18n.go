@@ -2,6 +2,7 @@ package i18next
 
 import (
 	"errors"
+	"github.com/yuangwei/go-i18next/internal/load"
 )
 
 type Backend struct {
@@ -9,18 +10,21 @@ type Backend struct {
 	CrossDomain bool
 }
 
+type CodeOptions struct {
+	LowerCaseLng bool // reverse lng to lowerCase, example: en-US => en-us
+	CleanCode    bool // reverse lng to clean, example: en-US / en-us => en
+}
+
 type I18nOptions struct {
-	Lng          []string                     // example: ["en-US", "fr-FR"]
-	FallbackLng  []string                     // example: ["en-US"]
-	DefaultLng   string                       // example: "en-US"
-	Ns           []string                     // example: ["dev", "stage", "prod"], not require. usage: https://example.com/locales/{{.Ns}}/{{.Lng]}.json
-	DefaultNS    string                       // example: "dev"
-	FallbackNS   []string                     // example: ["stage", "prod"]
-	Preload      bool                         // preload lng resource.
-	LowerCaseLng bool                         // reverse lng to lowerCase, example: en-US => en-us
-	CleanCode    bool                         // reverse lng to clean, example: en-US / en-us => en
-	Resources    map[string]map[string]string // load lngs from local, priority: 1
-	Backend      Backend                      // load lngs from file or network, priority: 2
+	Lng         []string                     // example: ["en-US", "fr-FR"]
+	FallbackLng []string                     // example: ["en-US"]
+	DefaultLng  string                       // example: "en-US"
+	NS          []string                     // example: ["dev", "prod"]
+	DefaultNs   string                       // example: "dev", , not require. usage: https://example.com/locales/{{.Ns}}/{{.Lng]}.json
+	Preload     bool                         // preload lng resource.
+	Backend     Backend                      // load lngs from file or network
+	Resources   map[string]map[string]string // load lngs from local
+	CodeOptions CodeOptions
 }
 
 type I18n struct {
@@ -30,7 +34,17 @@ type I18n struct {
 func Init(options I18nOptions) I18n {
 	i18n := &I18n{}
 	if options.Resources != nil {
-		i18n.langs = options.Resources[options.DefaultLng]
+		langs, err := load.LoadResourceInLocal(
+			options.DefaultLng,
+			options.FallbackLng,
+			options.Resources,
+			options.CodeOptions.LowerCaseLng,
+			options.CodeOptions.CleanCode,
+		)
+		if err != nil {
+			panic(any(err))
+		}
+		i18n.langs = langs
 	}
 	return *i18n
 }

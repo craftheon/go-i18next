@@ -95,9 +95,23 @@ func TestChangeLng(t *testing.T) {
 func TestNs(t *testing.T) {
 	i18n := i18next.Init(i18next.I18nOptions{
 		Lng:       []string{"en"},
-		DefaultNS: "dev",
+		DefaultNs: "dev",
 		Backend: i18next.Backend{
 			LoadPath: []string{"/locale/{{.Ns}}/{{.Lng}}/index.json"},
+		},
+	})
+	_, err := i18n.T("index.home")
+	if err != nil {
+		t.Fatalf(`i18n.T("index.home") = %q,`, err)
+	}
+}
+
+func TestLoadAllInFile(t *testing.T) {
+	i18n := i18next.Init(i18next.I18nOptions{
+		Lng:        []string{"en", "cn"},
+		DefaultLng: "en",
+		Backend: i18next.Backend{
+			LoadPath: []string{"/locale/{{.Lng}}/*"},
 		},
 	})
 	_, err := i18n.T("index.home")

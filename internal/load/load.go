@@ -2,7 +2,7 @@ package load
 
 import (
 	"errors"
-	"github.com/yuangwei/go-i18next/pkg/utils"
+	"github.com/yuangwei/go-i18next/internal/utils"
 )
 
 func LoadResourceInLocal(lang string, fallbackLng []string, resources map[string]map[string]string, lowerCase bool, cleanCode bool) (map[string]string, error) {
