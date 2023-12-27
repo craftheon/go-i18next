@@ -10,9 +10,10 @@ func TestI18nNext(t *testing.T) {
 	i18n, err := i18next.Init(i18next.I18nOptions{
 		Lng:        []string{"en", "cn"},
 		DefaultLng: "en",
+		Ns:         "yaml",
 		Backend: i18next.Backend{
 			LoadPath: []string{
-				"./examples/datas/json/{{.Lng}}/home.json",
+				"./examples/datas/{{.Ns}}/{{.Lng}}/home.yaml",
 			},
 		},
 	})

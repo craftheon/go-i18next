@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"gopkg.in/yaml.v2"
 	"io"
 	"net/http"
 	"os"
@@ -61,8 +62,9 @@ func (i *I18n) T(key string, props interface{}) (string, error) {
 		if err != nil {
 			return "", err
 		}
-		err = tmpl.Execute(os.Stdout, props)
-		return v, nil
+		buf := &bytes.Buffer{}
+		err = tmpl.Execute(buf, props)
+		return buf.String(), nil
 
 	}
 	return "", errors.New("Not found")
@@ -86,7 +88,7 @@ func (i *I18n) loadLangs(lng string) (map[string]string, error) {
 		return nil, errors.New(fmt.Sprintf("%s is not in Lngs", lng))
 	}
 	if backend.LoadPath != nil {
-		res, err := getLangs(i.opts)
+		res, err := getLangs(i.opts, lng)
 		if err != nil {
 			return nil, err
 		}
@@ -110,7 +112,7 @@ func loadResource(lng string, resources map[string]map[string]string, codeOpt Co
 	return nil, errors.New("resource not found")
 }
 
-func getLangs(opts I18nOptions) (map[string]map[string]string, error) {
+func getLangs(opts I18nOptions, lng string) (map[string]map[string]string, error) {
 	var resources map[string]map[string]string
 	var op = struct {
 		Ns  string
@@ -132,7 +134,7 @@ func getLangs(opts I18nOptions) (map[string]map[string]string, error) {
 		return nil, err
 	}
 
-	resData, err := parseData(data, getFilePrefix(p))
+	resData, err := parseData(data, lng, path.Ext(p))
 	if err != nil {
 		return nil, err
 	}
@@ -176,20 +178,22 @@ func getData(url string) ([]byte, error) {
 
 }
 
-func parseData(data []byte, prefix string) (map[string]map[string]string, error) {
-	var res map[string]map[string]string
-	err := json.Unmarshal(data, &res)
+func parseData(data []byte, lng string, prefix string) (map[string]map[string]string, error) {
+	var res map[string]string
+	var err error
+	if prefix == ".json" {
+		err = json.Unmarshal(data, &res)
+	} else if prefix == ".yaml" || prefix == ".yml" {
+		err = yaml.Unmarshal(data, &res)
+	} else {
+		return nil, errors.New("prefix not support")
+	}
 	if err != nil {
 		return nil, err
 	}
-	return res, nil
-}
-
-func getFilePrefix(fileName string) string {
-	all := path.Base(fileName)
-	suffix := path.Ext(fileName)
-	prefix := all[0 : len(all)-len(suffix)]
-	return prefix
+	resource := map[string]map[string]string{}
+	resource[lng] = res
+	return resource, nil
 }
 
 func toCleanCode(code string) string {
