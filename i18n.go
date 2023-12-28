@@ -117,7 +117,7 @@ func getLangs(opts I18nOptions, lng string) (map[string]map[string]string, error
 	var op = struct {
 		Ns  string
 		Lng string
-	}{Ns: opts.Ns, Lng: opts.DefaultLng}
+	}{Ns: opts.Ns, Lng: lng}
 	p := opts.Backend.LoadPath[0]
 	tmpl, err := template.New("p").Parse(p)
 	if err != nil {
