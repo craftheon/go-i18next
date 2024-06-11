@@ -1,4 +1,0 @@
-{
-  "title": "Hello, {{.Name}}",
-  "description": "This is home page"
-}

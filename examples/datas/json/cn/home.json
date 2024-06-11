@@ -1,4 +1,0 @@
-{
-  "title": "你好, {{.Name}}",
-  "description": "这是首页"
-}
