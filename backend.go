@@ -9,6 +9,6 @@ func (b *Backend) Load(options I18nOptions) (map[string]string, error) {
 
 }
 
-func (b *Backend) Reload() {
+func loadFromNetwork() {}
 
-}
+func loadFromLocal() {}
