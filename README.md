@@ -4,11 +4,11 @@ go-i18next is a port of [i18next](https://www.i18next.com/) in Go.
 
 ## Installation
 ```shell
-$ go get -u https://github.com/yuangwei/go-18next
+$ go get -u https://github.com/craftheon/go-18next
 ```
 ## Usage
 ```go
-import "github.com/yuangwei/go-18next"
+import "github.com/craftheon/go-18next"
 
 var i18n i18next.I18n
 
